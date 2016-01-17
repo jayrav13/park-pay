@@ -26,6 +26,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     var locationData : JSON!
     
+    var selectVehicleButton : UIButton!
+    var selectPaymentButton : UIButton!
+    
+    var parkCarRequest : [Int]!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -52,18 +57,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.setMapCenter()
         self.view.addSubview(mapView)
         
-        self.openSpotsLabel = UILabel(frame: CGRect(x: 0, y: Standard.screenHeight * 0.50, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
+        self.openSpotsLabel = UILabel(frame: CGRect(x: 0, y: Standard.screenHeight * 0.55, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
         self.openSpotsLabel.text = "...open spots..."
         self.openSpotsLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(self.openSpotsLabel)
         
-        self.payRateLabel = UILabel(frame: CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.50, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
+        self.payRateLabel = UILabel(frame: CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.55, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
         self.payRateLabel.text = "...pay rate ..."
         self.payRateLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(self.payRateLabel)
         
+        self.selectVehicleButton = UIButton(type: UIButtonType.System)
+        self.selectVehicleButton.setTitle("Pick Vehicle", forState: UIControlState.Normal)
+        self.selectVehicleButton.addTarget(self, action: "selectVehicleButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.selectVehicleButton.frame = CGRect(x: 0, y: Standard.screenHeight * 0.65, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05)
+        self.view.addSubview(self.selectVehicleButton)
+        
+        self.selectPaymentButton = UIButton(type: UIButtonType.System)
+        self.selectPaymentButton.setTitle("Pick Payment", forState: UIControlState.Normal)
+        self.selectPaymentButton.addTarget(self, action: "selectPaymentButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.selectPaymentButton.frame = CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.65, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05)
+        self.view.addSubview(self.selectPaymentButton)
+        
         self.parkButton = UIButton(type: UIButtonType.System)
-        self.parkButton.frame = CGRect(x: Standard.screenWidth * 0.35, y: Standard.screenHeight * 0.60, width: Standard.screenWidth * 0.30, height: Standard.screenHeight * 0.075)
+        self.parkButton.frame = CGRect(x: Standard.screenWidth * 0.35, y: Standard.screenHeight * 0.80, width: Standard.screenWidth * 0.30, height: Standard.screenHeight * 0.075)
         self.parkButton.layer.cornerRadius = 10
         self.parkButton.clipsToBounds = true
         self.parkButton.setTitle("PARK", forState: UIControlState.Normal)
@@ -73,6 +90,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         self.parkButton.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 28)
         self.view.addSubview(self.parkButton)
+        
+        
         
     }
 
@@ -86,7 +105,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        self.setMapCenter()
+        // self.setMapCenter()
     }
     
     func pushToSettingsViewController(sender : UIButton) {
@@ -100,22 +119,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func populateMap() {
-        API.getNearbyParkingLocations((self.locationManager.location?.coordinate.latitude)!, longitude: (self.locationManager.location?.coordinate.longitude)!) { (success, data) -> Void in
-            if success {
-                self.locationData = data
-                print(data)
-                for(var i = 0; i < data["parking"].count; i++) {
-                    let locationPin = MKPointAnnotation()
-                    locationPin.coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(data["parking"][i]["latitude"].doubleValue), CLLocationDegrees(data["parking"][i]["longitude"].doubleValue))
-                    locationPin.title = data["parking"][i]["street"].stringValue
-                    self.mapView.addAnnotation(locationPin)
+        if(CLLocationManager.locationServicesEnabled()) {
+            API.getNearbyParkingLocations((self.locationManager.location?.coordinate.latitude)!, longitude: (self.locationManager.location?.coordinate.longitude)!) { (success, data) -> Void in
+                if success {
+                    self.locationData = data
+                    print(data)
+                    for(var i = 0; i < data["parking"].count; i++) {
+                        let locationPin = MKPointAnnotation()
+                        locationPin.coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(data["parking"][i]["latitude"].doubleValue), CLLocationDegrees(data["parking"][i]["longitude"].doubleValue))
+                        locationPin.title = data["parking"][i]["street"].stringValue
+                        self.mapView.addAnnotation(locationPin)
+                    }
+                    
                 }
-                
-            }
-            else {
-                // Error message
+                else {
+                    // Error message
+                }
             }
         }
+        
     }
     
     func parkButtonPressed(sender : UIButton) {
