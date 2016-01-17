@@ -34,20 +34,28 @@ class SettingsViewController : UITableViewController {
     // Return the number of rows for each section in your static table
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return 2      // section 0 has X rows equal to the number of vehicles
-        case 1: return 1      // section 1 has X rows equal to the number of payments
+        case 0: return vehicles.count + 1      // section 0 has X rows equal to the number of vehicles + 1
+        case 1: return payments.count + 1      // section 1 has X rows equal to the number of payments + 1
         default: fatalError("Unknown number of sections")
         }
     }
     
     // Return the row for the corresponding section and row
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("cell")
-//        switch(indexPath.section) {
-//        case 0: return cell
-//        case 1: return cell
-//        default: fatalError("Unknown section")
-//        }
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell")
+        switch(indexPath.section) {
+        case 0: if (indexPath.row < vehicles.count) {
+            cell?.textLabel!.text = vehicles[indexPath.row]["make"].stringValue + " " + vehicles[indexPath.row]["model"].stringValue + " " + vehicles[indexPath.row]["year"].stringValue
+        } else {
+            cell?.textLabel!.text = "Add new vehicle"
+        };
+        case 1: if (indexPath.row < payments.count) {
+            cell?.textLabel!.text = String(payments[indexPath.row]["number"])
+        } else {
+            cell?.textLabel!.text = "Add new payment method"
+        };
+        default: fatalError("Unknown section")
+        }
         return cell!
     }
     
@@ -62,9 +70,25 @@ class SettingsViewController : UITableViewController {
     
     // Configure the row selection code for any cells that you want to customize the row selection
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        // deselect row
-        self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        if (indexPath.section == 0) {
+            let vehiclesViewController : VehiclesEditViewController = VehiclesEditViewController()
+            if (indexPath.row < vehicles.count) {
+                vehiclesViewController.make = self.vehicles[indexPath.row]["make"].stringValue
+                vehiclesViewController.model = self.vehicles[indexPath.row]["model"].stringValue
+                vehiclesViewController.year = self.vehicles[indexPath.row]["year"].stringValue
+                vehiclesViewController.license = self.vehicles[indexPath.row]["license"].stringValue
+            }
+            self.navigationController?.pushViewController(vehiclesViewController, animated: true)
+        } else {
+            let paymentsViewController : PaymentsEditViewController = PaymentsEditViewController()
+            if (indexPath.row < payments.count) {
+                paymentsViewController.name = payments[indexPath.row]["name"].stringValue
+                paymentsViewController.number = payments[indexPath.row]["number"].stringValue
+                paymentsViewController.cvv = payments[indexPath.row]["cvv"].stringValue
+                paymentsViewController.exp = payments[indexPath.row]["expiration_date"].stringValue
+            }
+            self.navigationController?.pushViewController(paymentsViewController, animated: true)
+        }
     }
     
 }
