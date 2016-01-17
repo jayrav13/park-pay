@@ -14,10 +14,24 @@ import CoreLocation
 class API {
     
     static var baseURL : String = "http://koolaid.ngrok.io/"
+    static var user_id : Int = 1
     
     static func getNearbyParkingLocations(latitude : CLLocationDegrees, longitude : CLLocationDegrees, completion : (success : Bool, data : JSON) -> Void) -> Void {
 
         Alamofire.request(Method.GET, self.baseURL + "parking").responseJSON { (response) -> Void in
+            
+            if response.result.isSuccess {
+                completion(success: true, data: JSON(response.result.value!))
+            }
+            else {
+                completion(success: false, data: nil)
+            }
+        }
+    }
+    
+    static func getUserData(completion : (success : Bool, data : JSON) -> Void) -> Void {
+        
+        Alamofire.request(Method.GET, baseURL + "users/" + String(user_id)).responseJSON { (response) -> Void in
             
             if response.result.isSuccess {
                 completion(success: true, data: JSON(response.result.value!))

@@ -11,30 +11,41 @@ import CoreLocation
 import MapKit
 import SwiftyJSON
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
+    // Location Manager
     var locationManager : CLLocationManager!
     var settingsBarButtonItem : UIBarButtonItem!
     
+    // Labels
     var openSpotsLabel : UILabel!
     var payRateLabel : UILabel!
     
+    // Buttons
     var parkButton : UIButton!
-    
-    var mapView : MKMapView!
-    var allPins : [MKPointAnnotation]!
-    
-    var locationData : JSON!
-    
     var selectVehicleButton : UIButton!
     var selectPaymentButton : UIButton!
     
+    // Maps
+    var mapView : MKMapView!
+    var allPins : [MKPointAnnotation]!
+    
+    // JSON
+    var locationData : JSON!
+    var userData : JSON!
+    
+    // Request
     var parkCarRequest : [Int]!
+    
+    // Picker View
+    var pickerView : UIPickerView!
+    var pickerViewIsVisible : Bool!
+    var pickerViewTagSwitch : Int!
+    var pickerViewData : [JSON]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
         self.view.backgroundColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1)
         self.title = "Select a Spot"
         
@@ -91,7 +102,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.parkButton.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 28)
         self.view.addSubview(self.parkButton)
         
+        self.getUserData()
+        self.pickerViewData = []
+        self.pickerViewTagSwitch = 0
         
+        self.pickerView = UIPickerView(frame: CGRect(x: 0, y: Standard.screenHeight, width: Standard.screenWidth, height: 216))
+        self.pickerView.delegate = self
+        self.pickerView.dataSource = self
+        self.pickerView.backgroundColor = UIColor.whiteColor()
+        self.pickerView.alpha = 1.0
+        self.pickerView.opaque = false
+        self.view.addSubview(pickerView)
         
     }
 
@@ -128,6 +149,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                         let locationPin = MKPointAnnotation()
                         locationPin.coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(data["parking"][i]["latitude"].doubleValue), CLLocationDegrees(data["parking"][i]["longitude"].doubleValue))
                         locationPin.title = data["parking"][i]["street"].stringValue
+                        locationPin.subtitle = String((Int(data["parking"][i]["id"].doubleValue)))
                         self.mapView.addAnnotation(locationPin)
                     }
                     
@@ -146,6 +168,91 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         self.title = mapView.selectedAnnotations[0].title!
+        let local_id : Int = Int(mapView.selectedAnnotations[0].subtitle!!)!
+        // self.openSpotsLabel = self.locationData["parking"][local_id]["num_spots"].stringValue
+        
+    }
+    
+    func selectVehicleButtonPressed(sender : UIButton) {
+        self.pickerViewTagSwitch = 0
+        self.pickerViewData = self.userData["user"]["vehicles"].array
+        self.pickerView.reloadAllComponents()
+        UIView.animateWithDuration(0.4, delay: 0.0, options: UIViewAnimationOptions.CurveEaseIn, animations: { () -> Void in
+            
+            self.pickerView.frame = CGRect(x: 0, y: Standard.screenHeight - 216, width: Standard.screenWidth, height: 216)
+            
+            }) { (myBool : Bool) -> Void in
+            
+            self.pickerViewIsVisible = true
+                
+        }
+    }
+    
+    func selectPaymentButtonPressed(sender : UIButton) {
+        self.pickerViewTagSwitch = 1
+        self.pickerViewData = self.userData["user"]["cards"].array
+        self.pickerView.reloadAllComponents()
+        UIView.animateWithDuration(0.4, delay: 0.0, options: UIViewAnimationOptions.CurveEaseIn, animations: { () -> Void in
+            
+            self.pickerView.frame = CGRect(x: 0, y: Standard.screenHeight - 216, width: Standard.screenWidth, height: 216)
+            
+            }) { (myBool : Bool) -> Void in
+                
+                self.pickerViewIsVisible = true
+                
+        }
+    }
+    
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerViewData.count
+    }
+    
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        if pickerViewTagSwitch == 0 {
+            return pickerViewData[row]["license"].stringValue
+        }
+        else {
+            return pickerViewData[row]["name"].stringValue
+        }
+    }
+    
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if self.pickerViewTagSwitch == 0 {
+            parkCarRequest[1] = row
+        }
+        else {
+            parkCarRequest[2] = row
+        }
+    }
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if(self.pickerViewIsVisible == true) {
+            UIView.animateWithDuration(0.4, delay: 0, options: UIViewAnimationOptions.CurveEaseInOut, animations: { () -> Void in
+                
+                self.pickerView.frame = CGRect(x: 0, y: Standard.screenHeight, width: Standard.screenHeight, height: 216)
+                
+                }, completion: { (myBool : Bool) -> Void in
+                    
+                self.pickerViewIsVisible = false
+                    
+            })
+
+        }
+    }
+    
+    func getUserData() {
+        API.getUserData { (success, data) -> Void in
+            if success {
+                self.userData = data
+            }
+            else {
+                // Error
+            }
+        }
     }
 
 }
