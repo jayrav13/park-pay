@@ -95,9 +95,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.parkButton.layer.cornerRadius = 10
         self.parkButton.clipsToBounds = true
         self.parkButton.setTitle("PARK", forState: UIControlState.Normal)
-        self.parkButton.addTarget(self, action: "parkButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        
         self.parkButton.backgroundColor = UIColor(red: 63/255, green: 81/255, blue: 181/255, alpha: 1)
         self.parkButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+        
+        if(mapView.annotations.count == 0) {
+            self.parkButton.alpha = 0.4
+        }
+        else {
+            self.parkButton.addTarget(self, action: "parkButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        }
         
         self.parkButton.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 28)
         self.view.addSubview(self.parkButton)
@@ -114,6 +121,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.pickerView.opaque = false
         self.view.addSubview(pickerView)
         
+        self.parkCarRequest = [0, 0, 0]
+        self.pickerViewIsVisible = false
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -126,7 +136,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        // self.setMapCenter()
+        self.setMapCenter()
     }
     
     func pushToSettingsViewController(sender : UIButton) {
@@ -143,7 +153,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func populateMap() {
         if(CLLocationManager.locationServicesEnabled()) {
-            API.getNearbyParkingLocations((self.locationManager.location?.coordinate.latitude)!, longitude: (self.locationManager.location?.coordinate.longitude)!) { (success, data) -> Void in
+            API.getNearbyParkingLocations() { (success, data) -> Void in
                 if success {
                     self.locationData = data
                     print(data)
@@ -151,7 +161,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                         let locationPin = MKPointAnnotation()
                         locationPin.coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(data["parking"][i]["latitude"].doubleValue), CLLocationDegrees(data["parking"][i]["longitude"].doubleValue))
                         locationPin.title = data["parking"][i]["street"].stringValue
-                        locationPin.subtitle = String((Int(data["parking"][i]["id"].doubleValue)))
                         self.mapView.addAnnotation(locationPin)
                     }
                     
@@ -165,13 +174,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
     
     func parkButtonPressed(sender : UIButton) {
-        
+        API.postClaim(self.parkCarRequest[0], vehicleId: self.parkCarRequest[1]) { (success, data) -> Void in
+            
+        }
+        print(self.parkCarRequest)
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        self.title = mapView.selectedAnnotations[0].title!
-        let local_id : Int = Int(mapView.selectedAnnotations[0].subtitle!!)!
-        // self.openSpotsLabel = self.locationData["parking"][local_id]["num_spots"].stringValue
+        let thisAnnotation = mapView.selectedAnnotations[0]
+        self.title = thisAnnotation.title!
+        var selected : JSON = nil
+        for(var i = 0; i < locationData["parking"].count; i++) {
+            if(self.locationData["parking"][i]["street"].stringValue == thisAnnotation.title!) {
+                selected = self.locationData["parking"][i]
+                break
+            }
+        }
+        if selected == nil {
+            // error
+            print("Error!")
+        }
+        else {
+            self.parkCarRequest[0] = Int(selected["id"].doubleValue)
+            self.openSpotsLabel.text = String(Int(selected["num_spots"].doubleValue)) + " spots available!"
+            self.payRateLabel.text = "$" + String(selected["rate"].doubleValue) + " per hour"
+        }
         
     }
     
@@ -215,16 +242,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         if pickerViewTagSwitch == 0 {
-            return pickerViewData[row]["license"].stringValue
+            return pickerViewData[row]["make"].stringValue + " " + pickerViewData[row]["model"].stringValue
         }
         else {
-            return pickerViewData[row]["name"].stringValue
+            return (pickerViewData[row]["number"].stringValue as NSString).substringWithRange(NSRange(location: pickerViewData[row]["number"].stringValue.characters.count - 4, length: 4))
         }
     }
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if self.pickerViewTagSwitch == 0 {
+            self.selectVehicleButton.setTitle(self.userData["user"]["vehicles"][row]["make"].stringValue + " " + self.userData["user"]["vehicles"][row]["model"].stringValue, forState: UIControlState.Normal)
             parkCarRequest[1] = row
+            
         }
         else {
             parkCarRequest[2] = row
