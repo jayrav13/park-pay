@@ -15,7 +15,6 @@ class SettingsViewController : UITableViewController {
     var vehicles : [JSON]!
     var payments : [JSON]!
     
-    
     override func loadView() {
         super.loadView()
         
@@ -26,6 +25,14 @@ class SettingsViewController : UITableViewController {
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        API.getUserData { (success, data) -> Void in
+            self.vehicles = data["user"]["vehicles"].array
+            self.payments = data["user"]["cards"].array
+            self.tableView.reloadData()
+        }
+    }
+    
     // Return the number of sections
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
@@ -34,8 +41,8 @@ class SettingsViewController : UITableViewController {
     // Return the number of rows for each section in your static table
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch(section) {
-        case 0: return vehicles.count + 1      // section 0 has X rows equal to the number of vehicles + 1
-        case 1: return payments.count + 1      // section 1 has X rows equal to the number of payments + 1
+        case 0: return self.vehicles.count + 1      // section 0 has X rows equal to the number of vehicles + 1
+        case 1: return self.payments.count + 1      // section 1 has X rows equal to the number of payments + 1
         default: fatalError("Unknown number of sections")
         }
     }
@@ -72,6 +79,7 @@ class SettingsViewController : UITableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if (indexPath.section == 0) {
             let vehiclesViewController : VehiclesEditViewController = VehiclesEditViewController()
+            vehiclesViewController.vehicleIndex = indexPath.row
             if (indexPath.row < vehicles.count) {
                 vehiclesViewController.make = self.vehicles[indexPath.row]["make"].stringValue
                 vehiclesViewController.model = self.vehicles[indexPath.row]["model"].stringValue
@@ -81,6 +89,7 @@ class SettingsViewController : UITableViewController {
             self.navigationController?.pushViewController(vehiclesViewController, animated: true)
         } else {
             let paymentsViewController : PaymentsEditViewController = PaymentsEditViewController()
+            paymentsViewController.paymentIndex = indexPath.row
             if (indexPath.row < payments.count) {
                 paymentsViewController.name = payments[indexPath.row]["name"].stringValue
                 paymentsViewController.number = payments[indexPath.row]["number"].stringValue

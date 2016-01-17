@@ -13,6 +13,7 @@ import UIKit
 class PaymentsEditViewController : UIViewController {
     
     var doneButton : UIBarButtonItem!
+    var paymentIndex : Int!
     
     var name : String!
     var number : String!
@@ -65,8 +66,9 @@ class PaymentsEditViewController : UIViewController {
     }
     
     func saveToSettingsViewController(sender : UIButton) {
-        let settingsViewController : SettingsViewController = SettingsViewController()
-        self.navigationController?.pushViewController(settingsViewController, animated: true)
+        API.postNewPayment(self.nameText.text!, number: self.numberText.text!, cvv: self.cvvText.text!, expiration: expText.text!) { (success, data) -> Void in
+            self.navigationController?.popViewControllerAnimated(true)
+        }
     }
     
 }

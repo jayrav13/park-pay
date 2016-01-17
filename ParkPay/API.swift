@@ -65,7 +65,7 @@ class API {
         
     }
     
-    static func postNewVehicle(makeName : String, modelName : String, year : Int, license : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
+    static func postNewVehicle(makeName : String, modelName : String, year : String, license : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
         
         let parameters : [String : AnyObject] = [
             "user_id" : self.user_id,
@@ -88,9 +88,10 @@ class API {
         
     }
     
-    static func postNewPayment(name : String, number: String, cvv : Int, expiration : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
+    static func postNewPayment(name : String, number: String, cvv : String, expiration : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
         
         let parameters : [String : AnyObject] = [
+            "user_id" : self.user_id,
             "name" : name,
             "number" : number,
             "cvv" : cvv,
