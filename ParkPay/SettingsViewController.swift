@@ -12,8 +12,8 @@ import UIKit
 
 class SettingsViewController : UITableViewController {
     
-    var vehicles : JSON!
-    var payments : JSON!
+    var vehicles : [JSON]!
+    var payments : [JSON]!
     
     
     override func loadView() {

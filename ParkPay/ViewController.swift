@@ -131,6 +131,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func pushToSettingsViewController(sender : UIButton) {
         let settingsViewController : SettingsViewController = SettingsViewController()
+        settingsViewController.vehicles = self.userData["user"]["vehicles"].array
+        settingsViewController.payments = self.userData["user"]["payments"].array
         self.navigationController?.pushViewController(settingsViewController, animated: true)
     }
 
