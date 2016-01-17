@@ -1,5 +1,5 @@
 //
-//  Welcome.swift
+//  SettingsViewController.swift
 //  ParkPay
 //
 //  Created by Jay Ravaliya on 1/16/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Welcome : UIViewController {
+class SettingsViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()

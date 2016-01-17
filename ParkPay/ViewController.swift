@@ -12,16 +12,25 @@ import CoreLocation
 class ViewController: UIViewController, CLLocationManagerDelegate {
 
     var locationManager : CLLocationManager!
+    var settingsBarButtonItem : UIBarButtonItem!
+    var streetNameLabel : UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        self.view.backgroundColor = UIColor.whiteColor()
         
         self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
+        
+        self.settingsBarButtonItem = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: "pushToSettingsViewController:")
+        self.navigationItem.rightBarButtonItem = settingsBarButtonItem
+        
+        // self.streetNameLabel = UILabel(frame: CGRect(x: Standard.screenHeight, y: <#T##Int#>, width: <#T##Int#>, height: <#T##Int#>))
         
     }
 
@@ -32,6 +41,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print((manager.location?.coordinate.latitude)!)
+    }
+    
+    func pushToSettingsViewController(sender : UIButton) {
+        let settingsViewController : SettingsViewController = SettingsViewController()
+        self.navigationController?.pushViewController(settingsViewController, animated: true)
     }
 
 

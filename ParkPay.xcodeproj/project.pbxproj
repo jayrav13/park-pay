@@ -14,7 +14,9 @@
 		E5E626C61C4ADD3D0090371E /* ParkPay.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E5E626C41C4ADD3D0090371E /* ParkPay.xcdatamodeld */; };
 		E5E626C81C4ADD3D0090371E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E5E626C71C4ADD3D0090371E /* Assets.xcassets */; };
 		E5E626CB1C4ADD3D0090371E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E5E626C91C4ADD3D0090371E /* LaunchScreen.storyboard */; };
-		E5E626D51C4AE27E0090371E /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626D41C4AE27E0090371E /* Welcome.swift */; };
+		E5E626D71C4AE3230090371E /* Standard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626D61C4AE3230090371E /* Standard.swift */; };
+		E5E626DB1C4AFE970090371E /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626DA1C4AFE970090371E /* API.swift */; };
+		E5E626DD1C4B0DA20090371E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626DC1C4B0DA20090371E /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +31,9 @@
 		E5E626C71C4ADD3D0090371E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E5E626CA1C4ADD3D0090371E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E5E626CC1C4ADD3D0090371E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E5E626D41C4AE27E0090371E /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
+		E5E626D61C4AE3230090371E /* Standard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Standard.swift; sourceTree = "<group>"; };
+		E5E626DA1C4AFE970090371E /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		E5E626DC1C4B0DA20090371E /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +97,9 @@
 			children = (
 				E5E626BD1C4ADD3D0090371E /* AppDelegate.swift */,
 				E5E626BF1C4ADD3D0090371E /* ViewController.swift */,
-				E5E626D41C4AE27E0090371E /* Welcome.swift */,
+				E5E626DA1C4AFE970090371E /* API.swift */,
+				E5E626D61C4AE3230090371E /* Standard.swift */,
+				E5E626DC1C4B0DA20090371E /* SettingsViewController.swift */,
 			);
 			name = "Swift Files";
 			sourceTree = "<group>";
@@ -232,10 +238,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5E626D51C4AE27E0090371E /* Welcome.swift in Sources */,
+				E5E626D71C4AE3230090371E /* Standard.swift in Sources */,
 				E5E626C01C4ADD3D0090371E /* ViewController.swift in Sources */,
 				E5E626BE1C4ADD3D0090371E /* AppDelegate.swift in Sources */,
 				E5E626C61C4ADD3D0090371E /* ParkPay.xcdatamodeld in Sources */,
+				E5E626DB1C4AFE970090371E /* API.swift in Sources */,
+				E5E626DD1C4B0DA20090371E /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
