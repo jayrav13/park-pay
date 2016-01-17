@@ -10,6 +10,7 @@
 		70C2EB251C4B7691005F1EE6 /* VehiclesEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C2EB241C4B7691005F1EE6 /* VehiclesEditViewController.swift */; };
 		70C2EB271C4B7B35005F1EE6 /* PaymentsEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C2EB261C4B7B34005F1EE6 /* PaymentsEditViewController.swift */; };
 		DF1D8C9837E110BC901E4558 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16BD291A5E471AECBD212B3A /* Pods.framework */; };
+		E533654C1C4BA5C400BFD984 /* CurrentlyParkedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E533654B1C4BA5C400BFD984 /* CurrentlyParkedViewController.swift */; };
 		E5E626BE1C4ADD3D0090371E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626BD1C4ADD3D0090371E /* AppDelegate.swift */; };
 		E5E626C01C4ADD3D0090371E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626BF1C4ADD3D0090371E /* ViewController.swift */; };
 		E5E626C31C4ADD3D0090371E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E5E626C11C4ADD3D0090371E /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 		70C2EB241C4B7691005F1EE6 /* VehiclesEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VehiclesEditViewController.swift; sourceTree = "<group>"; };
 		70C2EB261C4B7B34005F1EE6 /* PaymentsEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentsEditViewController.swift; sourceTree = "<group>"; };
 		DE42AA033960462371E145D9 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		E533654B1C4BA5C400BFD984 /* CurrentlyParkedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentlyParkedViewController.swift; sourceTree = "<group>"; };
 		E5E626BA1C4ADD3D0090371E /* ParkPay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParkPay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5E626BD1C4ADD3D0090371E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E5E626BF1C4ADD3D0090371E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				E5E626BD1C4ADD3D0090371E /* AppDelegate.swift */,
 				E5E626BF1C4ADD3D0090371E /* ViewController.swift */,
+				E533654B1C4BA5C400BFD984 /* CurrentlyParkedViewController.swift */,
 				E5E626DA1C4AFE970090371E /* API.swift */,
 				E5E626D61C4AE3230090371E /* Standard.swift */,
 				E5E626DC1C4B0DA20090371E /* SettingsViewController.swift */,
@@ -253,6 +256,7 @@
 				E5E626C61C4ADD3D0090371E /* ParkPay.xcdatamodeld in Sources */,
 				E5E626DB1C4AFE970090371E /* API.swift in Sources */,
 				E5E626DD1C4B0DA20090371E /* SettingsViewController.swift in Sources */,
+				E533654C1C4BA5C400BFD984 /* CurrentlyParkedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +371,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ParkPay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jrav.ParkPay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -382,6 +387,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ParkPay/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jrav.ParkPay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
