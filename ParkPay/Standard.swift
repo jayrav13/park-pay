@@ -13,8 +13,19 @@ class Standard {
     static var screenWidth : CGFloat = UIScreen.mainScreen().bounds.width
     static var screenHeight : CGFloat = UIScreen.mainScreen().bounds.height
     
-    func hasVisited() -> Bool {
-        return NSUserDefaults.standardUserDefaults().objectForKey("hasVisited") != nil
+    static func setUserParked(values : [Int]) {
+        NSUserDefaults.standardUserDefaults().setObject(values, forKey: "userParked")
     }
+    
+    static func getUserParked() -> [Int] {
+        if NSUserDefaults.standardUserDefaults().objectForKey("userParked") != nil {
+            return NSUserDefaults.standardUserDefaults().objectForKey("userParked") as! [Int]
+        }
+        else {
+            return []
+        }
+    }
+    
+    
     
 }

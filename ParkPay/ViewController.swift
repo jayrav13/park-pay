@@ -11,11 +11,12 @@ import CoreLocation
 import MapKit
 import SwiftyJSON
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     // Location Manager
     var locationManager : CLLocationManager!
     var settingsBarButtonItem : UIBarButtonItem!
+    var paymentsBarButtonItem : UIBarButtonItem!
     
     // Labels
     var openSpotsLabel : UILabel!
@@ -23,12 +24,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     // Buttons
     var parkButton : UIButton!
-    var selectVehicleButton : UIButton!
-    var selectPaymentButton : UIButton!
+    // var selectVehicleButton : UIButton!
+    // var selectPaymentButton : UIButton!
     
     // Maps
     var mapView : MKMapView!
-    var allPins : [MKPointAnnotation]!
+    var numberOfAnnotations : Int = 0
     
     // JSON
     var locationData : JSON!
@@ -43,6 +44,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var pickerViewTagSwitch : Int!
     var pickerViewData : [JSON]!
     
+    // Segmented Control
+    var segmentedControl : UISegmentedControl!
+    var segmentedControlItems : [String]!
+    
+    // View Controllers
+    var currentlyParkedViewController : CurrentlyParkedViewController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -55,9 +63,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
         
-        self.settingsBarButtonItem = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: "pushToSettingsViewController:")
-        self.navigationItem.rightBarButtonItem = settingsBarButtonItem
-        
         self.mapView = MKMapView()
         self.mapView.frame = CGRect(x: 0, y: Standard.screenHeight * 0, width: Standard.screenWidth, height: Standard.screenHeight * 0.5)
         self.mapView.mapType = MKMapType.Standard
@@ -68,43 +73,42 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.setMapCenter()
         self.view.addSubview(mapView)
         
+        self.settingsBarButtonItem = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: "pushToSettingsViewController:")
+        self.navigationItem.rightBarButtonItem = settingsBarButtonItem
+        
+        self.paymentsBarButtonItem = UIBarButtonItem(title: "Payments", style: UIBarButtonItemStyle.Plain, target: self, action: "showPaymentsViewController:")
+        self.navigationItem.leftBarButtonItem = paymentsBarButtonItem
+        
         self.openSpotsLabel = UILabel(frame: CGRect(x: 0, y: Standard.screenHeight * 0.55, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
-        self.openSpotsLabel.text = "...open spots..."
+        self.openSpotsLabel.text = "..."
         self.openSpotsLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(self.openSpotsLabel)
         
         self.payRateLabel = UILabel(frame: CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.55, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
-        self.payRateLabel.text = "...pay rate ..."
+        self.payRateLabel.text = "..."
         self.payRateLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(self.payRateLabel)
         
-        self.selectVehicleButton = UIButton(type: UIButtonType.System)
+        /*self.selectVehicleButton = UIButton(type: UIButtonType.System)
         self.selectVehicleButton.setTitle("Pick Vehicle", forState: UIControlState.Normal)
         self.selectVehicleButton.addTarget(self, action: "selectVehicleButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         self.selectVehicleButton.frame = CGRect(x: 0, y: Standard.screenHeight * 0.65, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05)
-        self.view.addSubview(self.selectVehicleButton)
+        self.view.addSubview(self.selectVehicleButton)*/
         
-        self.selectPaymentButton = UIButton(type: UIButtonType.System)
+        /*self.selectPaymentButton = UIButton(type: UIButtonType.System)
         self.selectPaymentButton.setTitle("Pick Payment", forState: UIControlState.Normal)
         self.selectPaymentButton.addTarget(self, action: "selectPaymentButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         self.selectPaymentButton.frame = CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.65, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05)
-        self.view.addSubview(self.selectPaymentButton)
+        self.view.addSubview(self.selectPaymentButton)*/
         
         self.parkButton = UIButton(type: UIButtonType.System)
         self.parkButton.frame = CGRect(x: Standard.screenWidth * 0.35, y: Standard.screenHeight * 0.80, width: Standard.screenWidth * 0.30, height: Standard.screenHeight * 0.075)
         self.parkButton.layer.cornerRadius = 10
         self.parkButton.clipsToBounds = true
         self.parkButton.setTitle("PARK", forState: UIControlState.Normal)
-        
         self.parkButton.backgroundColor = UIColor(red: 63/255, green: 81/255, blue: 181/255, alpha: 1)
         self.parkButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        
-        if(mapView.annotations.count == 0) {
-            self.parkButton.alpha = 0.4
-        }
-        else {
-            self.parkButton.addTarget(self, action: "parkButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
-        }
+        self.parkButton.addTarget(self, action: "parkButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         self.parkButton.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 28)
         self.view.addSubview(self.parkButton)
@@ -113,16 +117,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.pickerViewData = []
         self.pickerViewTagSwitch = 0
         
-        self.pickerView = UIPickerView(frame: CGRect(x: 0, y: Standard.screenHeight, width: Standard.screenWidth, height: 216))
+        /*self.pickerView = UIPickerView(frame: CGRect(x: 0, y: Standard.screenHeight, width: Standard.screenWidth, height: 216))
         self.pickerView.delegate = self
         self.pickerView.dataSource = self
         self.pickerView.backgroundColor = UIColor.whiteColor()
         self.pickerView.alpha = 1.0
         self.pickerView.opaque = false
-        self.view.addSubview(pickerView)
+        self.view.addSubview(pickerView)*/
         
-        self.parkCarRequest = [0, 0, 0]
+        self.parkCarRequest = [0, 0]
         self.pickerViewIsVisible = false
+        
+        currentlyParkedViewController = CurrentlyParkedViewController()
+        
+        if Standard.getUserParked().count != 0 {
+            self.presentViewController(self.currentlyParkedViewController, animated: true, completion: { () -> Void in
+                
+            })
+        }
         
     }
 
@@ -144,10 +156,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         settingsViewController.vehicles = self.userData["user"]["vehicles"].array
         settingsViewController.payments = self.userData["user"]["cards"].array
         self.navigationController?.pushViewController(settingsViewController, animated: true)
+        
     }
 
     func setMapCenter() {
-        let coordinateRegion : MKCoordinateRegion = MKCoordinateRegion(center: (self.locationManager.location?.coordinate)!, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        let coordinateRegion : MKCoordinateRegion = MKCoordinateRegion(center: (self.locationManager.location?.coordinate)!, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
         self.mapView.setRegion(coordinateRegion, animated: true)
     }
     
@@ -156,11 +169,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             API.getNearbyParkingLocations() { (success, data) -> Void in
                 if success {
                     self.locationData = data
-                    print(data)
                     for(var i = 0; i < data["parking"].count; i++) {
                         let locationPin = MKPointAnnotation()
                         locationPin.coordinate = CLLocationCoordinate2DMake(CLLocationDegrees(data["parking"][i]["latitude"].doubleValue), CLLocationDegrees(data["parking"][i]["longitude"].doubleValue))
                         locationPin.title = data["parking"][i]["street"].stringValue
+                        self.numberOfAnnotations = self.numberOfAnnotations + 1
                         self.mapView.addAnnotation(locationPin)
                     }
                     
@@ -170,14 +183,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 }
             }
         }
-        
     }
     
     func parkButtonPressed(sender : UIButton) {
-        API.postClaim(self.parkCarRequest[0], vehicleId: self.parkCarRequest[1]) { (success, data) -> Void in
-            
+        if self.parkCarRequest.contains(0) {
+            print("Error!")
         }
-        print(self.parkCarRequest)
+        else {
+            API.postClaim(self.parkCarRequest[0], vehicleId: self.parkCarRequest[1]) { (success, data) -> Void in
+                Standard.setUserParked(self.parkCarRequest)
+                self.presentViewController(self.currentlyParkedViewController, animated: true, completion: { () -> Void in
+                    
+                })
+            }
+            print(self.parkCarRequest)
+        }
+        
+    }
+    
+    func showPaymentsViewController(sender : UIButton) {
+        let historyViewController : HistoryViewController = HistoryViewController()
+        self.navigationController?.pushViewController(historyViewController, animated: true)
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
@@ -202,7 +228,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
     }
     
-    func selectVehicleButtonPressed(sender : UIButton) {
+    /*func selectVehicleButtonPressed(sender : UIButton) {
         self.pickerViewTagSwitch = 0
         self.pickerViewData = self.userData["user"]["vehicles"].array
         self.pickerView.reloadAllComponents()
@@ -211,13 +237,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             self.pickerView.frame = CGRect(x: 0, y: Standard.screenHeight - 216, width: Standard.screenWidth, height: 216)
             
             }) { (myBool : Bool) -> Void in
-            
-            self.pickerViewIsVisible = true
+                
+                self.pickerViewIsVisible = true
                 
         }
-    }
+    }*/
     
-    func selectPaymentButtonPressed(sender : UIButton) {
+    /*func selectPaymentButtonPressed(sender : UIButton) {
+
         self.pickerViewTagSwitch = 1
         self.pickerViewData = self.userData["user"]["cards"].array
         self.pickerView.reloadAllComponents()
@@ -230,9 +257,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 self.pickerViewIsVisible = true
                 
         }
-    }
+        
+    }*/
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    /*func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
     }
     
@@ -252,11 +280,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if self.pickerViewTagSwitch == 0 {
             self.selectVehicleButton.setTitle(self.userData["user"]["vehicles"][row]["make"].stringValue + " " + self.userData["user"]["vehicles"][row]["model"].stringValue, forState: UIControlState.Normal)
-            parkCarRequest[1] = row
+            parkCarRequest[1] = row + 1
             
         }
         else {
-            parkCarRequest[2] = row
+            //self.selectPaymentButton.setTitle((pickerViewData[row]["number"].stringValue as NSString).substringWithRange(NSRange(location: pickerViewData[row]["number"].stringValue.characters.count - 4, length: 4)), forState: UIControlState.Normal)
+            parkCarRequest[2] = row + 1
         }
     }
     
@@ -273,18 +302,38 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             })
 
         }
-    }
+    }*/
     
     func getUserData() {
         API.getUserData { (success, data) -> Void in
             if success {
                 self.userData = data
+                self.segmentedControlItems = []
+                for(var i = 0; i < self.userData["user"]["vehicles"].count; i++) {
+                    print("LOOP")
+                    self.segmentedControlItems.append(self.userData["user"]["vehicles"][i]["make"].stringValue + " " + self.userData["user"]["vehicles"][i]["model"].stringValue)
+                }
+                print(self.segmentedControlItems)
+                self.segmentedControl = UISegmentedControl(items: self.segmentedControlItems)
+                self.segmentedControl.selectedSegmentIndex = 0
+                self.segmentedControl.frame = CGRect(x: Standard.screenWidth * 0.02, y: Standard.screenHeight * 0.65, width: Standard.screenWidth * 0.96, height: Standard.screenWidth * 0.10)
+                self.segmentedControl.addTarget(self, action: "segmentedControlIndexChanged:", forControlEvents: UIControlEvents.ValueChanged)
+                self.view.addSubview(self.segmentedControl)
             }
             else {
                 // Error
             }
         }
     }
+    
+    func segmentedControlIndexChanged(segmentedControl : UISegmentedControl) {
+        print(segmentedControl.selectedSegmentIndex)
+        self.parkCarRequest[1] = Int(self.userData["user"]["vehicles"][segmentedControl.selectedSegmentIndex]["id"].doubleValue)
+        print(self.parkCarRequest)
+        
+    }
+    
+    
 
 }
 
