@@ -64,7 +64,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.locationManager.startUpdatingLocation()
         
         self.mapView = MKMapView()
-        self.mapView.frame = CGRect(x: 0, y: Standard.screenHeight * 0, width: Standard.screenWidth, height: Standard.screenHeight * 0.5)
+        self.mapView.frame = CGRect(x: 0, y: Standard.screenHeight * 0, width: Standard.screenWidth, height: Standard.screenHeight * 0.67)
         self.mapView.mapType = MKMapType.Standard
         self.mapView.zoomEnabled = true
         self.mapView.scrollEnabled = true
@@ -79,12 +79,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.paymentsBarButtonItem = UIBarButtonItem(title: "Payments", style: UIBarButtonItemStyle.Plain, target: self, action: "showPaymentsViewController:")
         self.navigationItem.leftBarButtonItem = paymentsBarButtonItem
         
-        self.openSpotsLabel = UILabel(frame: CGRect(x: 0, y: Standard.screenHeight * 0.55, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
+        self.openSpotsLabel = UILabel(frame: CGRect(x: 0, y: Standard.screenHeight * 0.67, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
         self.openSpotsLabel.text = "..."
         self.openSpotsLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(self.openSpotsLabel)
         
-        self.payRateLabel = UILabel(frame: CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.55, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
+        self.payRateLabel = UILabel(frame: CGRect(x: Standard.screenWidth / 2, y: Standard.screenHeight * 0.67, width: Standard.screenWidth / 2, height: Standard.screenHeight * 0.05))
         self.payRateLabel.text = "..."
         self.payRateLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(self.payRateLabel)
@@ -102,13 +102,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.view.addSubview(self.selectPaymentButton)*/
         
         self.parkButton = UIButton(type: UIButtonType.System)
-        self.parkButton.frame = CGRect(x: Standard.screenWidth * 0.35, y: Standard.screenHeight * 0.80, width: Standard.screenWidth * 0.30, height: Standard.screenHeight * 0.075)
+        self.parkButton.frame = CGRect(x: Standard.screenWidth * 0.35, y: Standard.screenHeight * 0.85, width: Standard.screenWidth * 0.30, height: Standard.screenHeight * 0.075)
         self.parkButton.layer.cornerRadius = 10
         self.parkButton.clipsToBounds = true
         self.parkButton.setTitle("PARK", forState: UIControlState.Normal)
-        self.parkButton.backgroundColor = UIColor(red: 63/255, green: 81/255, blue: 181/255, alpha: 1)
+        self.parkButton.backgroundColor = UIColor(red: 20/255, green: 118/255, blue: 255/255, alpha: 1)
         self.parkButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.parkButton.addTarget(self, action: "parkButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        
         
         self.parkButton.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 28)
         self.view.addSubview(self.parkButton)
@@ -131,7 +133,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         currentlyParkedViewController = CurrentlyParkedViewController()
         
         if Standard.getUserParked().count != 0 {
-            self.presentViewController(self.currentlyParkedViewController, animated: true, completion: { () -> Void in
+            self.presentViewController(UINavigationController(rootViewController: self.currentlyParkedViewController), animated: true, completion: { () -> Void in
                 
             })
         }
@@ -160,7 +162,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
 
     func setMapCenter() {
-        let coordinateRegion : MKCoordinateRegion = MKCoordinateRegion(center: (self.locationManager.location?.coordinate)!, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+        let coordinateRegion : MKCoordinateRegion = MKCoordinateRegion(center: (self.locationManager.location?.coordinate)!, span: MKCoordinateSpan(latitudeDelta: 0.025, longitudeDelta: 0.025))
         self.mapView.setRegion(coordinateRegion, animated: true)
     }
     
@@ -192,7 +194,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         else {
             API.postClaim(self.parkCarRequest[0], vehicleId: self.parkCarRequest[1]) { (success, data) -> Void in
                 Standard.setUserParked(self.parkCarRequest)
-                self.presentViewController(self.currentlyParkedViewController, animated: true, completion: { () -> Void in
+                self.presentViewController(UINavigationController(rootViewController: self.currentlyParkedViewController), animated: true, completion: { () -> Void in
                     
                 })
             }
@@ -203,6 +205,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func showPaymentsViewController(sender : UIButton) {
         let historyViewController : HistoryViewController = HistoryViewController()
+        historyViewController.userData = self.userData
         self.navigationController?.pushViewController(historyViewController, animated: true)
     }
     
@@ -316,7 +319,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 print(self.segmentedControlItems)
                 self.segmentedControl = UISegmentedControl(items: self.segmentedControlItems)
                 self.segmentedControl.selectedSegmentIndex = 0
-                self.segmentedControl.frame = CGRect(x: Standard.screenWidth * 0.02, y: Standard.screenHeight * 0.65, width: Standard.screenWidth * 0.96, height: Standard.screenWidth * 0.10)
+                self.segmentedControl.frame = CGRect(x: Standard.screenWidth * 0.02, y: Standard.screenHeight * 0.75, width: Standard.screenWidth * 0.96, height: Standard.screenWidth * 0.08)
                 self.segmentedControl.addTarget(self, action: "segmentedControlIndexChanged:", forControlEvents: UIControlEvents.ValueChanged)
                 self.view.addSubview(self.segmentedControl)
             }
