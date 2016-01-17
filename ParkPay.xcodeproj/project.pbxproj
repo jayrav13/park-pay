@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DF1D8C9837E110BC901E4558 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16BD291A5E471AECBD212B3A /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		DF1D8C9837E110BC901E4558 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16BD291A5E471AECBD212B3A /* Pods.framework */; };
 		E5E626BE1C4ADD3D0090371E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626BD1C4ADD3D0090371E /* AppDelegate.swift */; };
 		E5E626C01C4ADD3D0090371E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E626BF1C4ADD3D0090371E /* ViewController.swift */; };
 		E5E626C31C4ADD3D0090371E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E5E626C11C4ADD3D0090371E /* Main.storyboard */; };
@@ -151,6 +151,7 @@
 				TargetAttributes = {
 					E5E626B91C4ADD3C0090371E = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = JM88DB2765;
 					};
 				};
 			};
@@ -355,10 +356,13 @@
 			baseConfigurationReference = 30BB2DF72E266B9BC58A1D60 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ParkPay/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jrav.ParkPay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -367,10 +371,13 @@
 			baseConfigurationReference = DE42AA033960462371E145D9 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ParkPay/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jrav.ParkPay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
