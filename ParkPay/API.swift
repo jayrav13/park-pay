@@ -65,8 +65,6 @@ class API {
         
     }
     
-<<<<<<< HEAD
-=======
     static func postRelinquish(parkingId : Int, vehicleId : Int, completion : (success : Bool, data : JSON) -> Void) -> Void {
         
         let parameters = [
@@ -88,7 +86,6 @@ class API {
         
     }
     
->>>>>>> 679c1c5c42cfaf55ee0f8960f2b239d571fb834d
     static func postNewVehicle(makeName : String, modelName : String, year : String, license : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
         
         let parameters : [String : AnyObject] = [
