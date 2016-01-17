@@ -86,10 +86,11 @@ class API {
         
     }
     
-    static func postNewVehicle(makeName : String, modelName : String, year : String, license : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
+    static func postNewVehicle(vehicleID : Int, makeName : String, modelName : String, year : String, license : String, completion : (success : Bool, data : JSON) -> Void) -> Void {
         
         let parameters : [String : AnyObject] = [
             "user_id" : self.user_id,
+            "vehicle_id" : vehicleID,
             "make" : makeName,
             "model" : modelName,
             "year" : year,

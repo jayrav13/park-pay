@@ -79,17 +79,18 @@ class SettingsViewController : UITableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if (indexPath.section == 0) {
             let vehiclesViewController : VehiclesEditViewController = VehiclesEditViewController()
-            vehiclesViewController.vehicleIndex = indexPath.row
             if (indexPath.row < vehicles.count) {
+                vehiclesViewController.vehicleId = Int(vehicles[indexPath.row]["id"].doubleValue)
                 vehiclesViewController.make = self.vehicles[indexPath.row]["make"].stringValue
                 vehiclesViewController.model = self.vehicles[indexPath.row]["model"].stringValue
                 vehiclesViewController.year = self.vehicles[indexPath.row]["year"].stringValue
                 vehiclesViewController.license = self.vehicles[indexPath.row]["license"].stringValue
+            } else {
+                vehiclesViewController.vehicleId = -1
             }
             self.navigationController?.pushViewController(vehiclesViewController, animated: true)
         } else {
             let paymentsViewController : PaymentsEditViewController = PaymentsEditViewController()
-            paymentsViewController.paymentIndex = indexPath.row
             if (indexPath.row < payments.count) {
                 paymentsViewController.name = payments[indexPath.row]["name"].stringValue
                 paymentsViewController.number = payments[indexPath.row]["number"].stringValue

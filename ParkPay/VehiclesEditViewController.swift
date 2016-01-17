@@ -13,7 +13,7 @@ import UIKit
 class VehiclesEditViewController : UIViewController {
     
     var doneButton : UIBarButtonItem!
-    var vehicleIndex : Int!
+    var vehicleId : Int!
     
     var make : String!
     var model : String!
@@ -66,7 +66,7 @@ class VehiclesEditViewController : UIViewController {
     }
     
     func saveToSettingsViewController(sender : UIButton) {
-        API.postNewVehicle(self.makeText.text!, modelName: self.modelText.text!, year: self.yearText.text!, license: self.licenseText.text!) { (success, data) -> Void in
+        API.postNewVehicle(vehicleId, makeName: self.makeText.text!, modelName: self.modelText.text!, year: self.yearText.text!, license: self.licenseText.text!) { (success, data) -> Void in
             self.navigationController?.popViewControllerAnimated(true)
         }
     }
