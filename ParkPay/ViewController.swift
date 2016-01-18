@@ -69,6 +69,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         self.mapView.zoomEnabled = true
         self.mapView.scrollEnabled = true
         self.mapView.delegate = self
+        self.mapView.showsUserLocation = true
         self.populateMap()
         self.setMapCenter()
         self.view.addSubview(mapView)
