@@ -13,7 +13,7 @@ import CoreLocation
 
 class API {
     
-    static var baseURL : String = "http://koolaid.ngrok.io/"
+    static var baseURL : String = "http://54.201.99.234:5000/"
     static var user_id : Int = 1
     
     static func getNearbyParkingLocations(completion : (success : Bool, data : JSON) -> Void) -> Void {
